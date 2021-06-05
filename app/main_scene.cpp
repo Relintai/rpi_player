@@ -26,6 +26,8 @@ void MainScene::render() {
 	b3->render();
 
 	_ts->draw();
+
+	Renderer::get_singleton()->present();
 }
 
 MainScene::MainScene() {

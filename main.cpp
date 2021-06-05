@@ -96,6 +96,8 @@ int main(int argc, char **argv) {
 	mqtt_server->add_local_session(
 			"a/b", [](const std::string &client_id, const std::vector<uint8_t> &data, void *obj) { reinterpret_cast<ICApplication *>(obj)->mqtt_sensor_callback(client_id, data); }, app);
 
+	TTF_Init();
+
 	Renderer *renderer = new Renderer();
 	ImplApplication *sdl_app = new ImplApplication();
 
@@ -105,17 +107,16 @@ int main(int argc, char **argv) {
 		//mqtt_server->run_async();
 		//server->main_loop();
 
-		TTF_Init();
-
 		while (sdl_app->running) {
 			sdl_app->main_loop();
 		}
 
-		TTF_Quit();
 	} else {
 		printf("Running migrations.\n");
 		app->migrate();
 	}
+
+	TTF_Quit();
 
 	delete sdl_app;
 	delete renderer;

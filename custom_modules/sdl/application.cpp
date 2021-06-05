@@ -21,8 +21,6 @@ void Application::update(float delta) {
 }
 void Application::render() {
     scene->render();
-
-	Renderer::get_singleton()->present();
 }
 
 void Application::main_loop() {

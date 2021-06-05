@@ -4,11 +4,12 @@
 #include "application.h"
 
 #include "main_scene.h"
+#include "vlc_scene.h"
 
 class ImplApplication : public Application {
 public:
     ImplApplication() : Application() {
-        scene = new MainScene();
+        scene = new VLCScene();
     }
     ~ImplApplication() {
         delete scene;
