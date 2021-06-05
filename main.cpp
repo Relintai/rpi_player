@@ -21,7 +21,7 @@
 #include <SDL_ttf.h>
 #include "application.h"
 #include "renderer/renderer.h"
-#include "impl_application.h"
+#include "app/impl_application.h"
 
 #define MAIN_CLASS ICApplication
 
