@@ -2,6 +2,8 @@ engine
 modules/*
 logs/*
 
+*.pyc
+*.a
 *.d
 *.o
 *.meta

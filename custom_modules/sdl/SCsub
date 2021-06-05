@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+
+Import("env_mod")
+Import("env")
+
+env_mod.core_sources = []
+
+env_mod.add_source_files(env_mod.core_sources, "*.cpp")
+env_mod.add_source_files(env_mod.core_sources, "core/*.cpp")
+env_mod.add_source_files(env_mod.core_sources, "renderer/*.cpp")
+env_mod.add_source_files(env_mod.core_sources, "widgets/*.cpp")
+
+
+env_mod.Prepend(LINKFLAGS=["-lSDL2_ttf"])
+env.Prepend(LINKFLAGS=["-lSDL2_ttf"])
+
+env_mod.Prepend(CPPPATH=["#../custom_modules/sdl"])
+env.Prepend(CPPPATH=["#../custom_modules/sdl"])
+
+# Build it all as a library
+lib = env_mod.add_library("sdl", env_mod.core_sources)
+env.Prepend(LIBS=[lib])

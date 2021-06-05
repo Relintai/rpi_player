@@ -2,9 +2,9 @@
 #include <iostream>
 #include <string>
 
-#include "core/http/web_application.h"
-#include "core/file_cache.h"
 #include "core/bry_http/http_server.h"
+#include "core/file_cache.h"
+#include "core/http/web_application.h"
 
 #include "app/ic_application.h"
 
@@ -15,6 +15,13 @@
 #include "core/settings.h"
 
 #include "custom_modules/mqtt_server/mqtt_server.h"
+
+#include <thread>
+
+#include <SDL_ttf.h>
+#include "application.h"
+#include "renderer/renderer.h"
+#include "impl_application.h"
 
 #define MAIN_CLASS ICApplication
 
@@ -86,17 +93,32 @@ int main(int argc, char **argv) {
 
 	MQTTServer *mqtt_server = new MQTTServer();
 	mqtt_server->initialize();
-	mqtt_server->add_local_session("a/b", [](const std::string &client_id, const std::vector<uint8_t> &data, void* obj){ reinterpret_cast<ICApplication*>(obj)->mqtt_sensor_callback(client_id, data); }, app);
+	mqtt_server->add_local_session(
+			"a/b", [](const std::string &client_id, const std::vector<uint8_t> &data, void *obj) { reinterpret_cast<ICApplication *>(obj)->mqtt_sensor_callback(client_id, data); }, app);
+
+	Renderer *renderer = new Renderer();
+	ImplApplication *sdl_app = new ImplApplication();
 
 	if (!migrate) {
 		printf("Initialized!\n");
 
-		mqtt_server->run_async();
-		server->main_loop();
+		//mqtt_server->run_async();
+		//server->main_loop();
+
+		TTF_Init();
+
+		while (sdl_app->running) {
+			sdl_app->main_loop();
+		}
+
+		TTF_Quit();
 	} else {
 		printf("Running migrations.\n");
 		app->migrate();
 	}
+
+	delete sdl_app;
+	delete renderer;
 
 	delete mqtt_server;
 	delete server;
