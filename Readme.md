@@ -1,6 +1,8 @@
-# Data collection test app for rcpp framework
+# RPI player
 
-Simple data collector app written with rcpp framework for a university project.
+Will be a simple media player frontend for raspberry pis based on SDL2. Think like oldschool mp4 players.
+
+The idea is to make it super simple and efficient so that it can be used on a pi zero with small lcd screens.
 
 ## Compilation
 
