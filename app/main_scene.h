@@ -7,7 +7,7 @@
 #include "renderer/texture.h"
 #include "renderer/sprite.h"
 #include "renderer/camera.h"
-#include "renderer/button.h"
+#include "widgets/button.h"
 #include "renderer/true_type_font.h"
 #include "renderer/text_image.h"
 #include "renderer/text_sprite.h"

@@ -2,7 +2,7 @@
 
 #include "math.h"
 
-void Button::event(const SDL_Event &ev) {
+void Button::_event(const SDL_Event &ev) {
 	if (state == BUTTON_STATE_OFF) {
 		return;
 	}
@@ -49,10 +49,10 @@ void Button::event(const SDL_Event &ev) {
 	}
 }
 
-void Button::update(float delta) {
+void Button::_update(float delta) {
 }
 
-void Button::render() {
+void Button::_render() {
 	if (state == BUTTON_STATE_UP) {
 		if (up) {
 			up->set_transform(transform);
