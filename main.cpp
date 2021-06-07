@@ -14,8 +14,6 @@
 
 #include "core/settings.h"
 
-#include "custom_modules/mqtt_server/mqtt_server.h"
-
 #include <thread>
 
 #include <SDL_ttf.h>
@@ -91,11 +89,6 @@ int main(int argc, char **argv) {
 	server->port = 8080;
 	server->initialize();
 
-	MQTTServer *mqtt_server = new MQTTServer();
-	mqtt_server->initialize();
-	mqtt_server->add_local_session(
-			"a/b", [](const std::string &client_id, const std::vector<uint8_t> &data, void *obj) { reinterpret_cast<ICApplication *>(obj)->mqtt_sensor_callback(client_id, data); }, app);
-
 	TTF_Init();
 
 	Renderer *renderer = new Renderer();
@@ -104,7 +97,6 @@ int main(int argc, char **argv) {
 	if (!migrate) {
 		printf("Initialized!\n");
 
-		//mqtt_server->run_async();
 		//server->main_loop();
 
 		while (sdl_app->running) {
@@ -121,7 +113,6 @@ int main(int argc, char **argv) {
 	delete sdl_app;
 	delete renderer;
 
-	delete mqtt_server;
 	delete server;
 	delete app;
 	delete dbm;

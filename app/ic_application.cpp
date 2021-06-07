@@ -93,30 +93,6 @@ void ICApplication::migrate() {
 	DatabaseManager::get_singleton()->ddb->query_run(sql);
 }
 
-void ICApplication::mqtt_sensor_callback(const std::string &client_id, const std::vector<uint8_t> &data) {
-	if (client_id != "1") {
-		return;
-	}
-
-	if (data.size() == 0) {
-		return;
-	}
-
-	std::string d;
-	d.reserve(data.size());
-
-	for (int i = 0; i < data.size(); ++i) {
-		d += data[i];
-	}
-
-	//IMPORTANT: SQL INJECTION WILL WORK ON THIS, IF YOU DON"T FILTER THE CLINET IDS!!!! No prepared statement support yet! :(
-	std::string sql = "INSERT INTO sensor_data (client_id, measurement)"
-					  "VALUES ('" +
-					  client_id + "'," + d + ");";
-
-	DatabaseManager::get_singleton()->ddb->query_run(sql);
-}
-
 void ICApplication::load_md(const std::string &file_name, std::string *str) {
 	FILE *f = fopen(file_name.c_str(), "r");
 

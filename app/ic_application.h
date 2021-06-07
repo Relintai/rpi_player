@@ -23,8 +23,6 @@ public:
 
     virtual void migrate();
 
-    void mqtt_sensor_callback(const std::string &client_id, const std::vector<uint8_t> &data);
-
     void load_md(const std::string &file_name, std::string *str);
 
     ICApplication();
