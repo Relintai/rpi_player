@@ -47,7 +47,7 @@ MainScene::MainScene() {
 	_ts->set_y(50);
 
 	b1 = new Button();
-	b1->transform = Rect2(0, 0, 100, 100);
+	b1->rect = Rect2(0, 0, 100, 100);
 	b1->up = new Sprite(_texture);
 	b1->down = new Sprite(_texture, Color(100, 100, 100));
 	b1->hover = new Sprite(_texture, Color(200, 200, 200));
@@ -55,12 +55,12 @@ MainScene::MainScene() {
 	//b1->on_click = [this]() -> void { this->member_print(); };
 
 	b2 = new Button();
-	b2->transform = Rect2(0, 110, 100, 100);
+	b2->rect = Rect2(0, 110, 100, 100);
 	b2->off = new Sprite(_texture, Color(50, 50, 50));
 	b2->state = Button::BUTTON_STATE_OFF;
 
 	b3 = new Button();
-	b3->transform = Rect2(0, 220, 100, 100);
+	b3->rect = Rect2(0, 220, 100, 100);
 	b3->up = new Sprite(_texture);
 	b3->down = new Sprite(_texture, Color(100, 100, 100));
 	b3->hover = new Sprite(_texture, Color(200, 200, 200));

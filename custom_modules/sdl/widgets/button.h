@@ -13,30 +13,28 @@
 
 class Button : public Widget {
 public:
-    enum ButtonState {
-        BUTTON_STATE_UP,
-        BUTTON_STATE_HOVER,
-        BUTTON_STATE_DOWN,
-        BUTTON_STATE_OFF,
-    };
+	enum ButtonState {
+		BUTTON_STATE_UP,
+		BUTTON_STATE_HOVER,
+		BUTTON_STATE_DOWN,
+		BUTTON_STATE_OFF,
+	};
 
 	void _event(const SDL_Event &ev);
 	void _update(float delta);
 	void _render();
 
-    std::function<void(void)> on_click;
+	std::function<void(void)> on_click;
 
-    Button();
-    virtual ~Button();
+	Button();
+	virtual ~Button();
 
-    ButtonState state;
+	ButtonState state;
 
-	Rect2 transform;
-
-    Sprite *up;
-    Sprite *down;
-    Sprite *hover;
-    Sprite *off;
+	Sprite *up;
+	Sprite *down;
+	Sprite *hover;
+	Sprite *off;
 };
 
 #endif

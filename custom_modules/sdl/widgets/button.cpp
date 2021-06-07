@@ -12,7 +12,7 @@ void Button::_event(const SDL_Event &ev) {
 			int x = ev.motion.x;
 			int y = ev.motion.y;
 
-			if (transform.x < x && transform.x + transform.w > x && transform.y < y && transform.y + transform.w > y) {
+			if (rect.x < x && rect.x + rect.w > x && rect.y < y && rect.y + rect.w > y) {
 				state = BUTTON_STATE_HOVER;
 			} else {
 				state = BUTTON_STATE_UP;
@@ -24,7 +24,7 @@ void Button::_event(const SDL_Event &ev) {
 			int x = ev.motion.x;
 			int y = ev.motion.y;
 
-			if (transform.x < x && transform.x + transform.w > x && transform.y < y && transform.y + transform.w > y) {
+			if (rect.x < x && rect.x + rect.w > x && rect.y < y && rect.y + rect.w > y) {
 				state = BUTTON_STATE_DOWN;
 			}
 
@@ -34,7 +34,7 @@ void Button::_event(const SDL_Event &ev) {
 			int x = ev.motion.x;
 			int y = ev.motion.y;
 
-			if (transform.x < x && transform.x + transform.w > x && transform.y < y && transform.y + transform.w > y) {
+			if (rect.x < x && rect.x + rect.w > x && rect.y < y && rect.y + rect.w > y) {
 				state = BUTTON_STATE_HOVER;
 
 				if (on_click) {
@@ -55,28 +55,28 @@ void Button::_update(float delta) {
 void Button::_render() {
 	if (state == BUTTON_STATE_UP) {
 		if (up) {
-			up->set_transform(transform);
+			up->set_transform(rect);
 			up->draw();
 		}
 	} else if (state == BUTTON_STATE_HOVER) {
 		if (hover) {
-			hover->set_transform(transform);
+			hover->set_transform(rect);
 			hover->draw();
 		}
 	} else if (state == BUTTON_STATE_DOWN) {
 		if (down) {
-			down->set_transform(transform);
+			down->set_transform(rect);
 			down->draw();
 		}
 	} else if (state == BUTTON_STATE_OFF) {
 		if (off) {
-			off->set_transform(transform);
+			off->set_transform(rect);
 			off->draw();
 		}
 	}
 }
 
-Button::Button() {
+Button::Button() : Widget() {
 	state = BUTTON_STATE_UP;
 
 	up = nullptr;
