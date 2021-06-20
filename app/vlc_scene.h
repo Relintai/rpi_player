@@ -24,6 +24,10 @@ public:
 	libvlc_media_t *m;
 	libvlc_media_player_t *mp;
 
+	static VLCScene *scene;
+
+	char *chroma;
+
 	bool r;
 	int done;
 	int action;

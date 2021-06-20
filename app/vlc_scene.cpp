@@ -10,8 +10,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define VIDEOWIDTH 320
-#define VIDEOHEIGHT 240
+int VIDEOWIDTH = 0;
+int VIDEOHEIGHT = 0;
 
 // VLC prepares to render a video frame.
 static void *lock(void *data, void **p_pixels) {
@@ -33,6 +33,7 @@ static void unlock(void *data, void *id, void *const *p_pixels) {
 	uint16_t *pixels = (uint16_t *)*p_pixels;
 
 	// We can also render stuff.
+	
 	int x, y;
 	for (y = 10; y < 40; y++) {
 		for (x = 10; x < 40; x++) {
@@ -42,11 +43,41 @@ static void unlock(void *data, void *id, void *const *p_pixels) {
 				// RV16 = 5+6+5 pixels per color, BGR.
 				pixels[y * VIDEOWIDTH + x] = 0x02ff;
 			}
+
+			pixels[y * VIDEOWIDTH + x] = 0x02ff;
 		}
 	}
 
 	SDL_UnlockTexture(c->texture);
 	SDL_UnlockMutex(c->mutex);
+}
+
+static unsigned int formatSetup(void **opaque, char *chroma, unsigned *w, unsigned *h, unsigned *pitches, unsigned *lines) {
+	if (VLCScene::scene->texture) {
+		return 1;
+	}
+
+	memcpy(chroma, "RV16", sizeof("RV16") - 1);
+
+	VIDEOWIDTH = *w;
+	VIDEOHEIGHT = *h;
+
+	printf("%d %d\n", VIDEOWIDTH, VIDEOHEIGHT);
+
+	*pitches = VIDEOWIDTH * 2;
+	*lines = VIDEOHEIGHT;
+
+	VLCScene::scene->texture = SDL_CreateTexture(
+			Renderer::get_singleton()->get_renderer(),
+			SDL_PIXELFORMAT_BGR565, SDL_TEXTUREACCESS_STREAMING,
+			VIDEOWIDTH, VIDEOHEIGHT);
+
+	if (!VLCScene::scene->texture) {
+		fprintf(stderr, "Couldn't create texture: %s\n", SDL_GetError());
+		return 1;
+	}
+
+	return 1;
 }
 
 // VLC wants to display a video frame.
@@ -63,15 +94,15 @@ static void display(void *data, void *id) {
 	rect.x = (int)((1. + .5 * sin(0.03 * c->n)) * (w - VIDEOWIDTH) / 2);
 	rect.y = (int)((1. + .5 * cos(0.03 * c->n)) * (h - VIDEOHEIGHT) / 2);
 
-	Renderer::get_singleton()->set_draw_color(0, 80, 0, 255);
-	Renderer::get_singleton()->clear();
-	SDL_RenderCopy(Renderer::get_singleton()->get_renderer(), c->texture, NULL, &rect);
+	//Renderer::get_singleton()->set_draw_color(0, 80, 0, 255);
+	//Renderer::get_singleton()->clear();
+	//SDL_RenderCopy(Renderer::get_singleton()->get_renderer(), c->texture, NULL, &rect);
 	//Renderer::get_singleton()->present();
 
-	//SDL_SetRenderDrawColor(Renderer::get_singleton()->get_renderer(), 0, 80, 0, 255);
-	//SDL_RenderClear(Renderer::get_singleton()->get_renderer());
-	//SDL_RenderCopy(Renderer::get_singleton()->get_renderer(), c->texture, NULL, &rect);
-	//SDL_RenderPresent(Renderer::get_singleton()->get_renderer());
+	SDL_SetRenderDrawColor(Renderer::get_singleton()->get_renderer(), 0, 80, 0, 255);
+	SDL_RenderClear(Renderer::get_singleton()->get_renderer());
+	SDL_RenderCopy(Renderer::get_singleton()->get_renderer(), c->texture, NULL, &rect);
+	SDL_RenderPresent(Renderer::get_singleton()->get_renderer());
 }
 
 void VLCScene::event(const SDL_Event &ev) {
@@ -109,26 +140,19 @@ void VLCScene::render() {
 }
 
 VLCScene::VLCScene() {
+	scene = this;
 	r = false;
 	done = 0;
 	action = 0;
 	pause = 0;
-
-	texture = SDL_CreateTexture(
-			Renderer::get_singleton()->get_renderer(),
-			SDL_PIXELFORMAT_BGR565, SDL_TEXTUREACCESS_STREAMING,
-			VIDEOWIDTH, VIDEOHEIGHT);
-
-	if (!texture) {
-		fprintf(stderr, "Couldn't create texture: %s\n", SDL_GetError());
-		return;
-	}
+	texture = nullptr;
 
 	mutex = SDL_CreateMutex();
 
 	char const *vlc_argv[] = {
 		//"--no-audio", // Don't play audio.
 		"--no-xlib", // Don't use Xlib.
+		//"--verbose", "3",
 
 		// Apply a video filter.
 		//"--video-filter", "sepia",
@@ -151,16 +175,21 @@ VLCScene::VLCScene() {
 		return;
 	}
 
-	m = libvlc_media_new_path(libvlc, "./test.mp4");
+	m = libvlc_media_new_path(libvlc, "./test.mkv");
 
 	mp = libvlc_media_player_new_from_media(m);
 	libvlc_media_release(m);
 
+	//memcpy(chroma, "RV16", 4);
+
+	libvlc_video_set_format_callbacks(mp, formatSetup, NULL);
+
 	libvlc_video_set_callbacks(mp, lock, unlock, display, this);
-	libvlc_video_set_format(mp, "RV16", VIDEOWIDTH, VIDEOHEIGHT, VIDEOWIDTH * 2);
+	//libvlc_video_set_format(mp, chroma, VIDEOWIDTH, VIDEOHEIGHT, VIDEOWIDTH * 2);
 }
 
 VLCScene::~VLCScene() {
+	scene = nullptr;
 
 	// Stop stream and clean up libVLC.
 	libvlc_media_player_stop(mp);
@@ -170,3 +199,5 @@ VLCScene::~VLCScene() {
 	// Close window and clean up libSDL.
 	SDL_DestroyMutex(mutex);
 }
+
+VLCScene *VLCScene::scene = nullptr;

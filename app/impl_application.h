@@ -9,8 +9,8 @@
 class ImplApplication : public Application {
 public:
     ImplApplication() : Application() {
-        //scene = new VLCScene();
-        scene = new MainScene();
+        scene = new VLCScene();
+        //scene = new MainScene();
     }
     ~ImplApplication() {
         delete scene;
